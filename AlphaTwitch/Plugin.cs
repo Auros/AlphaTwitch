@@ -3,6 +3,9 @@ using IPA.Config;
 using IPA.Utilities;
 using UnityEngine.SceneManagement;
 using IPALogger = IPA.Logging.Logger;
+using StreamCore.Chat;
+using System.Reflection;
+using Harmony;
 
 namespace AlphaTwitch
 {
@@ -15,12 +18,16 @@ namespace AlphaTwitch
 
         public void OnApplicationStart()
         {
-            Logger.log.Debug("OnApplicationStart");
+            TwitchWebSocketClient.Initialize();
+            _ = TwitchCore.Instance;
+            _ = AlphaTwitchManager.Instance;
+
+            HarmonyInstance.Create("com.auros.BeatSaber.AlphaTwitch").PatchAll(Assembly.GetExecutingAssembly());
         }
 
         public void OnApplicationQuit()
         {
-            Logger.log.Debug("OnApplicationQuit");
+            
         }
 
         public void OnFixedUpdate()

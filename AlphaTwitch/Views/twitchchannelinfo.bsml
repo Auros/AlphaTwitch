@@ -1,0 +1,7 @@
+﻿<vertical>
+  <horizontal bg='round-rect-panel' pad='2'>
+	<button on-click='press' text='Update'></button>
+	<button on-click='press' text='Update'></button>
+  </horizontal>
+  <image id='channelpic'></image>
+</vertical>
