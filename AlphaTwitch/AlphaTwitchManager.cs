@@ -23,6 +23,36 @@ namespace AlphaTwitch
 {
     public class AlphaTwitchManager : MonoBehaviour
     {
+        public class Settings
+        {
+            public class EmotePopups
+            {
+                public static bool Enable = true;
+            }
+
+            public static void Load()
+            {
+                EmotePopups.Enable = ModuleEnabled("EmotePopups");
+            }
+
+            public static void Save()
+            {
+                Logger.log.Info("Saving: " + EmotePopups.Enable.ToString());
+                Config.SetBool(BuildUIString("EmotePopups"), "Enable", EmotePopups.Enable);
+            }
+
+            private static string BuildUIString(string name)
+            {
+                return $"AlphaTwitch - {name}";
+            }
+
+            private static bool ModuleEnabled(string name)
+            {
+                return Config.GetBool(BuildUIString(name), "Enable", true, true);
+            }
+        }
+
+        internal static BS_Utils.Utilities.Config Config = new BS_Utils.Utilities.Config("[LM] - AlphaTwitch");
         public static Dictionary<string, Sprite> TwitchEmotePool = new Dictionary<string, Sprite>();
         public static Dictionary<string, Sprite> BTTVEmotePool = new Dictionary<string, Sprite>();
         public static Dictionary<string, GIFer> BTTVAnimatedEmotePool = new Dictionary<string, GIFer>();
@@ -57,7 +87,11 @@ namespace AlphaTwitch
             _twitchCore.MessageReceived += MessageReceived;
             EmoteProcessed += T_EmoteProcessed;
             ImageTag img = new ImageTag();
+            ImageTypeHandler ith = new ImageTypeHandler();
             BSMLParser.instance.RegisterTag(img);
+            BSMLParser.instance.RegisterTypeHandler(ith);
+
+            Settings.Load();
         }
 
 
@@ -98,7 +132,8 @@ namespace AlphaTwitch
         {
             if (arg1.name == "GameCore")
             {
-                EmotePopups.EmotePopups.Load();
+                if (Settings.EmotePopups.Enable) //MOD DONE?! NEEDS TESTING @ FEFE
+                    EmotePopups.EmotePopups.Load();
             }
         }
 
@@ -128,6 +163,8 @@ namespace AlphaTwitch
         private void GetBTTVEmotes()
         {
             StartCoroutine(GetBTTVChannelEmotes());
+            StartCoroutine(GetBTTVGlobalEmotes());
+            StartCoroutine(GetFFZChannelEmotes());
         }
 
         private IEnumerator GetBTTVChannelEmotes()
@@ -166,7 +203,79 @@ namespace AlphaTwitch
                         }
                     }
                 }
-                
+            }
+        }
+
+        public IEnumerator GetBTTVGlobalEmotes()
+        {
+
+            UnityWebRequest www = UnityWebRequest.Get($"https://api.betterttv.net/2/emotes");
+            yield return www.SendWebRequest();
+
+            if (www.isNetworkError || www.isHttpError)
+            {
+
+            }
+            else
+            {
+                JSONNode json = JSON.Parse(www.downloadHandler.text);
+                if (json["status"].AsInt == 200)
+                {
+
+                    JSONArray emotes = json["emotes"].AsArray;
+                    foreach (JSONObject o in emotes)
+                    {
+                        if (o["imageType"] != "gif")
+                        {
+                            var id = (string)o["id"];
+                            SharedCoroutineStarter.instance.StartCoroutine(LoadScripts.LoadSpriteCoroutine($"https://cdn.betterttv.net/emote/{id}/3x", (image) =>
+                            {
+                                BTTVEmotePool.Add(o["code"], image);
+                            }));
+                        }
+                        else
+                        {
+                            var id = (string)o["id"];
+                            var gif = new GameObject().AddComponent<GIFer>();
+                            gif.Create($"https://cdn.betterttv.net/emote/{id}/3x");
+                            DontDestroyOnLoad(gif); //Im sorry
+                            BTTVAnimatedEmotePool.Add(o["code"], gif);
+                        }
+                    }
+                }
+            }
+        }
+
+        public IEnumerator GetFFZChannelEmotes() //{TwitchLoginConfig.Instance.TwitchChannelName}
+        {
+
+            UnityWebRequest www = UnityWebRequest.Get($"https://api.frankerfacez.com/v1/room/{TwitchLoginConfig.Instance.TwitchChannelName}");
+            yield return www.SendWebRequest();
+
+            if (www.isNetworkError || www.isHttpError)
+            {
+
+            }
+            else
+            {
+
+                JSONNode json = JSON.Parse(www.downloadHandler.text);
+                if (json["sets"].IsObject)
+                {
+                    JSONArray emotes = json["sets"][json["room"]["set"].ToString()]["emoticons"].AsArray;
+                    foreach (JSONObject o in emotes)
+                    {
+                        JSONObject urls = o["urls"].AsObject;
+                        string url = urls[urls.Count - 1];
+                        string index = url.Substring(url.IndexOf(".com/") + 5);
+                        SharedCoroutineStarter.instance.StartCoroutine(LoadScripts.LoadSpriteCoroutine(url, (image) =>
+                        {
+                            BTTVEmotePool.Add(o["name"], image); //i think this works? lmao
+                        }));
+
+                        
+                    }
+                }
             }
         }
 

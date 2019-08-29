@@ -23,11 +23,13 @@ namespace AlphaTwitch
             _ = AlphaTwitchManager.Instance;
 
             HarmonyInstance.Create("com.auros.BeatSaber.AlphaTwitch").PatchAll(Assembly.GetExecutingAssembly());
+
+            
         }
 
         public void OnApplicationQuit()
         {
-            
+            AlphaTwitchManager.Settings.Save();
         }
 
         public void OnFixedUpdate()

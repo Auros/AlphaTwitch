@@ -17,21 +17,12 @@ namespace AlphaTwitch.UI
         public override GameObject CreateObject(Transform parent)
         {
             GameObject gameObject = new GameObject("ATImage");
-            var element = gameObject.AddComponent<AspectRatioFitter>();
-            element.aspectRatio = 1f;
-            element.aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
 
             RawImage image = gameObject.AddComponent<RawImage>();
             image.material = Utilities.Sprites.NoGlowMat;
             image.rectTransform.sizeDelta = new Vector2(20f, 20f);
             image.rectTransform.SetParent(parent, false);
             image.texture = Utilities.Sprites.BlankSprite.texture;
-
-            
-            //Texture2D tex = new Texture2D(1, 1);
-            //tex.wrapMode = TextureWrapMode.Clamp;
-            //tex.LoadImage(Convert.FromBase64String(imageb64));
-            //_userImage.texture = tex;
 
             return gameObject;
         }

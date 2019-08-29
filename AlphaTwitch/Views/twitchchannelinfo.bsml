@@ -1,7 +1,12 @@
-﻿<vertical>
-  <horizontal bg='round-rect-panel' pad='2'>
-	<button on-click='press' text='Update'></button>
-	<button on-click='press' text='Update'></button>
+﻿<vertical child-control-height='false' pad='5'>
+  <horizontal bg='round-rect-panel' pad='4'>
+	<image id='channelpic' size='30'></image>
+	<vertical pad='1'>
+		<text id='channelname' text=''></text>
+		<text id='status' text=''></text>
+		<text id='title' text=''></text>
+		<text id='viewcount' text=''></text>
+	</vertical>
   </horizontal>
-  <image id='channelpic'></image>
+  <button on-click='press' text='Refresh View Count'></button>
 </vertical>

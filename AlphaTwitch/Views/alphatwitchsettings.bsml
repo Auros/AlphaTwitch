@@ -1,0 +1,12 @@
+﻿<settings-container>
+  <horizontal pref-width='90'>
+
+    <text text="Emote Popups module will take the most recent emotes said in chat then randomly spawns them in the world when you hit a note. Supports the BTTV emotes linked to your channel."></text>
+    
+    
+  </horizontal>
+
+  <bool-setting text='Emote Popups' id='epd' value='ep' apply-on-change='true' on-change='eef'></bool-setting>
+
+  
+</settings-container>

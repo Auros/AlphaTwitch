@@ -44,6 +44,10 @@
     <Reference Include="BSML">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Plugins\BSML.dll</HintPath>
     </Reference>
+    <Reference Include="BS_Utils, Version=1.3.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Plugins\BS_Utils.dll</HintPath>
+    </Reference>
     <Reference Include="IPA.Loader">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Beat Saber\Beat Saber_Data\Managed\IPA.Loader.dll</HintPath>
     </Reference>
@@ -108,8 +112,10 @@
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TwitchCore.cs" />
+    <Compile Include="UI\AlphaSettings.cs" />
     <Compile Include="UI\AlphaTwitchFlowCoordinator.cs" />
     <Compile Include="UI\ImageTag.cs" />
+    <Compile Include="UI\ImageTypeHandler.cs" />
     <Compile Include="UI\PluginUI.cs" />
     <Compile Include="UI\TwitchChannelViewController.cs" />
     <Compile Include="Utilities\Downloader.cs" />
@@ -121,6 +127,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\twitchchannelinfo.bsml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\alphatwitchsettings.bsml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

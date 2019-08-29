@@ -32,6 +32,8 @@ namespace AlphaTwitch.UI
         public void Init()
         {
             MenuButtonUI.AddButton("Alpha Twitch", AlphaTwitchButtonPressed);
+
+            BeatSaberMarkupLanguage.Settings.BSMLSettings.instance.AddSettingsMenu("Alpha Twitch", "AlphaTwitch.Views.alphatwitchsettings.bsml", PersistentSingleton<AlphaSettings>.instance);
         }
 
         private void AlphaTwitchButtonPressed()
