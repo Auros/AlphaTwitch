@@ -102,6 +102,10 @@ namespace AlphaTwitch
             if (msg.emotes != "")
             {
                 string[] emotes = msg.emotes.Split('/');
+
+                if (!Settings.EmotePopups.Enable)
+                    return;
+
                 foreach (var emote in emotes)
                 {
                     string invemote = emote;

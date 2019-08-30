@@ -8,5 +8,5 @@
 		<text id='viewcount' text=''></text>
 	</vertical>
   </horizontal>
-  <button on-click='press' text='Refresh View Count'></button>
+  <button on-click='press' text='Refresh Info'></button>
 </vertical>
