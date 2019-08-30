@@ -86,10 +86,10 @@ namespace AlphaTwitch
 
             _twitchCore.MessageReceived += MessageReceived;
             EmoteProcessed += T_EmoteProcessed;
-            ImageTag img = new ImageTag();
-            ImageTypeHandler ith = new ImageTypeHandler();
-            BSMLParser.instance.RegisterTag(img);
-            BSMLParser.instance.RegisterTypeHandler(ith);
+            //ImageTag img = new ImageTag();
+            //ImageTypeHandler ith = new ImageTypeHandler();
+            //BSMLParser.instance.RegisterTag(img);
+            //BSMLParser.instance.RegisterTypeHandler(ith);
 
             Settings.Load();
         }

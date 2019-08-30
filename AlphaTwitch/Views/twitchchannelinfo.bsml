@@ -1,6 +1,6 @@
 ﻿<vertical child-control-height='false' pad='5'>
   <horizontal bg='round-rect-panel' pad='4'>
-	<image id='channelpic' size='30'></image>
+	<image id='channelpic' pref-width='30' pref-height='30'></image>
 	<vertical pad='1'>
 		<text id='channelname' text=''></text>
 		<text id='status' text=''></text>
