@@ -9,4 +9,5 @@
 	</vertical>
   </horizontal>
   <button on-click='press' text='Refresh Info'></button>
+  <button text='w' on-click='yee'></button>
 </vertical>

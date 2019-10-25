@@ -112,15 +112,20 @@
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TwitchCore.cs" />
+    <Compile Include="Types.cs" />
     <Compile Include="UI\AlphaSettings.cs" />
     <Compile Include="UI\AlphaTwitchFlowCoordinator.cs" />
     <Compile Include="UI\ImageTag.cs" />
     <Compile Include="UI\ImageTypeHandler.cs" />
     <Compile Include="UI\PluginUI.cs" />
     <Compile Include="UI\TwitchChannelViewController.cs" />
+    <Compile Include="UI\TwitchViewersListViewController.cs" />
+    <Compile Include="UI\TwitchViewerViewController.cs" />
     <Compile Include="Utilities\Downloader.cs" />
     <Compile Include="Utilities\StreamCoreIsAnnoying.cs" />
     <Compile Include="Utilities\UniGifImageAspectController.cs" />
+    <EmbeddedResource Include="Views\twitchviewer.bsml" />
+    <EmbeddedResource Include="Views\twitchviewerslist.bsml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="manifest.json" />

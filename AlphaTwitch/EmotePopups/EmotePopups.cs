@@ -39,18 +39,23 @@ namespace AlphaTwitch.EmotePopups
         private void MessageReceived(TwitchMessage msg)
         {
             string[] msgParts = msg.message.Split(' ').Distinct().ToArray();
-
+            int count = 0;
             foreach (var pe in msgParts)
             {
+                if (count > 3)
+                    break;
+
                 if (AlphaTwitchManager.BTTVEmotePool.ContainsKey(pe))
                 {
                     AlphaTwitchManager.BTTVEmotePool.TryGetValue(pe, out Sprite sprite);
                     emotePool.Add(new Emote() { EmoteData = sprite, Type = EmoteType.BTTV, Id = pe });
+                    count++;
                 }
                 else if (AlphaTwitchManager.BTTVAnimatedEmotePool.ContainsKey(pe))
                 {
                     AlphaTwitchManager.BTTVAnimatedEmotePool.TryGetValue(pe, out GIFer gif);
                     emotePool.Add(new Emote() { EmoteData = gif, Type = EmoteType.BTTVAnimated, Id = pe });
+                    count++;
                 }
             }
         }

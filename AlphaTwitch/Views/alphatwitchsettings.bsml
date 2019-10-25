@@ -7,6 +7,5 @@
   </horizontal>
 
   <bool-setting text='Emote Popups' id='epd' value='ep' apply-on-change='true' on-change='eef'></bool-setting>
-
   
 </settings-container>

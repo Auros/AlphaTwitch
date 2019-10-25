@@ -41,6 +41,14 @@ namespace AlphaTwitch.UI
             StartCoroutine(UpdateViewCountInternally());
         }
 
+        public Action yee;
+
+        [UIAction("yee")]
+        private void Yee()
+        {
+            yee.Invoke();
+        }
+
         public void GenerateImage(string url)
         {
             SharedCoroutineStarter.instance.StartCoroutine(Utilities.LoadScripts.LoadSpriteCoroutine(url, (image) =>

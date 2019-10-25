@@ -1,0 +1,5 @@
+﻿<bg>
+	<page-button event-click='list#PageUp' direction='Up' anchor-max-y='1'></page-button>
+	<list id='list' select-cell='viewer-click' expand-cell='true'></list>
+	<page-button event-click='list#PageDown' direction='Down' anchor-min-y='0'></page-button>
+</bg>

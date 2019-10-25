@@ -1,0 +1,21 @@
+﻿<vertical>
+  <horizontal pad='1'>
+      <horizontal pad-right='4' horizontal-fit='PreferredSize'>
+        <image id='viewerpicture' pref-width='15' pref-height='15'></image>
+      </horizontal>
+      <horizontal bg='round-rect-panel' pad-left='5' pad-right='5' horizontal-fit='PreferredSize'>
+        <text id='viewername' align='Center' font-size='4'></text>
+      </horizontal>
+    </horizontal>
+    <text id='oauth' align='Center' font-size='2'></text>
+  <horizontal bg='round-rect-panel' pad='3'>
+    <vertical>
+        <button id='ban' on-click='ban' glow-color='red' text='Ban User'></button>
+        <button id='timeout' on-click='timeout' glow-color='blue' text='Time Out'></button>
+    </vertical>
+    <vertical>
+        <button id='mod' on-click='mod' glow-color='green' text='Give Mod'></button>
+        <button id='vip' on-click='vip' glow-color='purple' text='Give VIP'></button>
+    </vertical>
+  </horizontal>
+</vertical>

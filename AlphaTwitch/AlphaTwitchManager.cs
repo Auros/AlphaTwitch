@@ -57,6 +57,11 @@ namespace AlphaTwitch
         public static Dictionary<string, Sprite> BTTVEmotePool = new Dictionary<string, Sprite>();
         public static Dictionary<string, GIFer> BTTVAnimatedEmotePool = new Dictionary<string, GIFer>();
 
+
+        public static ConcurrentDictionary<string, Viewer> Viewers = new ConcurrentDictionary<string, Viewer>();
+
+
+
         private static AlphaTwitchManager _instance;
         public static AlphaTwitchManager Instance
         {
@@ -86,17 +91,87 @@ namespace AlphaTwitch
 
             _twitchCore.MessageReceived += MessageReceived;
             EmoteProcessed += T_EmoteProcessed;
-            //ImageTag img = new ImageTag();
-            //ImageTypeHandler ith = new ImageTypeHandler();
-            //BSMLParser.instance.RegisterTag(img);
-            //BSMLParser.instance.RegisterTypeHandler(ith);
 
             Settings.Load();
+        }
+
+        private IEnumerator GetTwitchViewerInfo(TwitchMessage msg)
+        {
+            yield return new WaitForSecondsRealtime(.025f);
+            using (UnityWebRequest www = UnityWebRequest.Get($"https://api.twitch.tv/helix/users?login={msg.user.displayName}"))
+            {
+                www.SetRequestHeader("Client-ID", "gbrndadd5hgnm9inrdsw8xpx5w9xa9");
+                yield return www.SendWebRequest();
+
+                JSONNode response = JSON.Parse(www.downloadHandler.text);
+                if (response["data"].AsArray.Count > 0)
+                {
+                    var userdata = response["data"][0];
+                    var profile = (string)userdata["profile_image_url"];
+                    var type = (string)userdata["type"];
+                    var btype = (string)userdata["broadcaster_type"];
+
+                    bool userCached = Viewers.TryGetValue(msg.user.displayName, out Viewer vi);
+
+                    if (!userCached)
+                    {
+                        Viewer newViewer = new Viewer
+                        {
+                            Name = msg.user.displayName,
+                            ID = msg.user.id,
+                        };
+
+                        Logger.log.Info("Color: " + msg.user.color);
+                        if (msg.user.color != "")
+                            newViewer.Color = msg.user.color;
+                        else
+                            newViewer.Color = "#ffffff";
+
+                        if (type == "")
+                        {
+                            if (btype == "partner")
+                                newViewer.Type = Type.Partner;
+                            else if (btype == "affiliate")
+                                newViewer.Type = Type.Affiliate;
+                            else
+                                newViewer.Type = Type.None;
+                        }
+                        else if (type == "staff")
+                            newViewer.Type = Type.Staff;
+                        else if (type == "admin")
+                            newViewer.Type = Type.Admin;
+                        else
+                            newViewer.Type = Type.None;
+
+                        if (msg.user.id == "152734662")
+                            newViewer.Role = Role.Other;
+                        else if (msg.user.isBroadcaster)
+                            newViewer.Role = Role.Broadcaster;
+                        else if (msg.user.isMod)
+                            newViewer.Role = Role.Mod;
+                        else if (msg.user.isVip)
+                            newViewer.Role = Role.Vip;
+                        else if (msg.user.isSub)
+                            newViewer.Role = Role.Sub;
+                        else
+                            newViewer.Role = Role.None;
+
+                        SharedCoroutineStarter.instance.StartCoroutine(LoadScripts.LoadSpriteCoroutine(profile, (image) => {
+                            newViewer.Profile = image.texture;
+                            Viewers.TryAdd(msg.user.displayName.ToLower(), newViewer);
+                        }));
+                        
+                    }
+                }
+            }
         }
 
 
         private void MessageReceived(TwitchMessage msg)
         {
+            //User Fetch and Cache
+            PersistentSingleton<HMMainThreadDispatcher>.instance.Enqueue(GetTwitchViewerInfo(msg));
+
 
             //Emote Cache
             if (msg.emotes != "")
@@ -106,8 +181,12 @@ namespace AlphaTwitch
                 if (!Settings.EmotePopups.Enable)
                     return;
 
+                int count = 0;
                 foreach (var emote in emotes)
                 {
+                    if (count > 3)
+                        break;
+
                     string invemote = emote;
                     int index = invemote.IndexOf(":");
                     if (index > 0)
@@ -128,6 +207,7 @@ namespace AlphaTwitch
                     {
                         EmoteProcessed.Invoke(invemote);
                     }
+                    count++;
                 }
             }
         }

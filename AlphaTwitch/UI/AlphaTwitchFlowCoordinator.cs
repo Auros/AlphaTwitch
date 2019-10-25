@@ -18,6 +18,8 @@ namespace AlphaTwitch.UI
     {
         public MainFlowCoordinator mainFlowCoordinator;
         private TwitchChannelViewController _twitchChannelVC;
+        private TwitchViewersListViewController _twitchViewListVC;
+        private TwitchViewerViewController _twitchViewerVC;
         protected DismissableNavigationController _dismissableNavController;
 
         public string TwitchId = "";
@@ -29,15 +31,78 @@ namespace AlphaTwitch.UI
                 title = "Alpha Twitch";
 
                 _twitchChannelVC = BeatSaberUI.CreateViewController<TwitchChannelViewController>();
+                _twitchViewListVC = BeatSaberUI.CreateViewController<TwitchViewersListViewController>();
+                _twitchViewListVC.viewerClicked += ViewerClicked;
+                _twitchViewerVC = BeatSaberUI.CreateViewController<TwitchViewerViewController>();
 
                 _dismissableNavController = Instantiate(Resources.FindObjectsOfTypeAll<DismissableNavigationController>().First());
                 _dismissableNavController.didFinishEvent += Dismiss;
 
-                SetViewControllersToNavigationConctroller(_dismissableNavController, _twitchChannelVC);
-                ProvideInitialViewControllers(_dismissableNavController); //TwitchLoginConfig.Instance.TwitchChannelName
-
+                SetViewControllersToNavigationConctroller(_dismissableNavController, _twitchViewListVC);
+                ProvideInitialViewControllers(_dismissableNavController, _twitchChannelVC);
+                
                 SharedCoroutineStarter.instance.StartCoroutine(GetThenSetTwitchData(TwitchLoginConfig.Instance.TwitchChannelName));
             }
+        }
+
+        private void ViewerClicked(Viewer obj)
+        {
+            if (!_twitchViewerVC.isInViewControllerHierarchy)
+            {
+                PushViewControllerToNavigationController(_dismissableNavController, _twitchViewerVC);
+            }
+
+            if (obj.Role == Role.Other)
+                UpdateLights(new Color(0, 1, 1, 1));
+            else if (obj.Type == Type.Admin)
+                UpdateLights(Color.red);
+            else if (obj.Type == Type.Staff)
+                UpdateLights(Color.white);
+            else if (obj.Type == Type.Partner)
+                UpdateLights(new Color(119f / 255, 50f / 255, 209f / 255, 1));
+            else if (obj.Role == Role.Mod)
+                UpdateLights(new Color(96f / 255, 245f / 255, 66f / 255, 1));
+            else if (obj.Role == Role.Vip)
+                UpdateLights(new Color(218f / 255, 66f / 255, 245f / 255, 1));
+            else
+                MenuLightsSO().SetColorsFromPreset(defaultPreset);
+
+            _twitchViewerVC.SetData(obj);
+        }
+
+        private void UpdateLights(Color color)
+        {
+            var x = Resources.FindObjectsOfTypeAll<MenuLightsPresetSO>().First();
+            if (x != null)
+            {
+                var ids = x.lightIdColorPairs;
+                foreach (var light in ids)
+                {
+                    MenuLightsSO().SetColor(light.lightId, color);
+                }
+            }
+            else
+                Logger.log.Info("bruh");
+        }
+
+        private MenuLightsPresetSO defaultPreset;
+
+        private MenuLightsManager _mLSO;
+        public MenuLightsManager MenuLightsSO()
+        {
+            if (_mLSO == null)
+            {
+                _mLSO = Resources.FindObjectsOfTypeAll<MenuLightsManager>().First();
+                defaultPreset = Resources.FindObjectsOfTypeAll<MenuLightsPresetSO>().First();
+                return _mLSO;
+            }
+            else
+                return _mLSO;
+        }
+
+        private void Bruh()
+        {
+            
         }
 
         private IEnumerator GetThenSetTwitchData(string channelName)
@@ -83,6 +148,7 @@ namespace AlphaTwitch.UI
 
         private void Dismiss(DismissableNavigationController navController)
         {
+            MenuLightsSO().SetColorsFromPreset(defaultPreset);
             (mainFlowCoordinator as FlowCoordinator).InvokePrivateMethod("DismissFlowCoordinator", new object[] { this, null, false });
         }
     }
